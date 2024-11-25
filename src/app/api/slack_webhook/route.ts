@@ -22,12 +22,12 @@ export async function POST(req: Request) {
   const payload = await req.json();
   console.log("Payload :", payload);
   console.log("Request: ", req);
-  if (payload.type === "url_verification") {
-    return NextResponse.json({ challenge: payload.challenge });
-  }
-  const { event } = payload;
-  if (event && event.type === "app_mention") {
-    const userMessage = event.text.replace(/<@[^>]+>/, "").trim();
+  // if (payload.type === "url_verification") {
+  //   return NextResponse.json({ challenge: payload.challenge });
+  // }
+  // const { event } = payload;
+  if (payload && payload.type === "message") {
+    const userMessage = payload.text.replace(/<@[^>]+>/, "").trim();
     console.log("userMessage: ", userMessage);
     try {
       // Get ChatGPT response from OpenAI
@@ -37,12 +37,12 @@ export async function POST(req: Request) {
       await axios.post(
         "https://slack.com/api/chat.postMessage",
         {
-          channel: event.channel,
+          channel: payload.channel,
           text: openAIResponse,
         },
         {
           headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_SLACK_CHANNEL_ACCESS_TOKEN}`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_LINE_CHANNEL_ACCESS_TOKEN}`,
             "Content-Type": "application/json",
           },
         }
@@ -55,35 +55,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Failed to process request" });
     }
   }
-  if (event && event.type === "message" && !event.bot_id) {
-    const userMessage = event.text.replace(/<@[^>]+>/, "").trim();
-    console.log("userMessage: ", userMessage);
-    try {
-      // Get ChatGPT response from OpenAI
-      const openAIResponse = await getOpenAIResponse(userMessage);
-      console.log("response: ", openAIResponse);
-      // Send response to Slack
-      await axios.post(
-        "https://slack.com/api/chat.postMessage",
-        {
-          channel: event.channel,
-          text: openAIResponse,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_SLACK_CHANNEL_ACCESS_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  // if (event && event.type === "message" && !event.bot_id) {
+  //   const userMessage = event.text.replace(/<@[^>]+>/, "").trim();
+  //   console.log("userMessage: ", userMessage);
+  //   try {
+  //     // Get ChatGPT response from OpenAI
+  //     const openAIResponse = await getOpenAIResponse(userMessage);
+  //     console.log("response: ", openAIResponse);
+  //     // Send response to Slack
+  //     await axios.post(
+  //       "https://slack.com/api/chat.postMessage",
+  //       {
+  //         channel: event.channel,
+  //         text: openAIResponse,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${process.env.NEXT_PUBLIC_SLACK_CHANNEL_ACCESS_TOKEN}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      console.log("Success:", openAIResponse);
-      return NextResponse.json({ status: "Message sent to Slack" });
-    } catch (error) {
-      console.error("Error:", error);
-      return NextResponse.json({ error: "Failed to process request" });
-    }
-  }
-  console.log("No Action is taken:", event);
+  //     console.log("Success:", openAIResponse);
+  //     return NextResponse.json({ status: "Message sent to Slack" });
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     return NextResponse.json({ error: "Failed to process request" });
+  //   }
+  // }
+  console.log("No Action is taken:");
   return NextResponse.json({ status: "No action taken" });
 }
