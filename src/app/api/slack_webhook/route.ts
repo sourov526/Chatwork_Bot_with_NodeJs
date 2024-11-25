@@ -37,12 +37,12 @@ export async function POST(req: Request) {
       await axios.post(
         "https://slack.com/api/chat.postMessage",
         {
-          channel: payload.channel,
+          channel: `${process.env.NEXT_PUBLIC_SLACK_APP_ID}`,
           text: openAIResponse,
         },
         {
           headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_LINE_CHANNEL_ACCESS_TOKEN}`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_SLACK_CHANNEL_ACCESS_TOKEN}`,
             "Content-Type": "application/json",
           },
         }
