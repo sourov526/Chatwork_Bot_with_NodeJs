@@ -4,7 +4,6 @@ import axios from "axios";
 
 const slackToken = process.env.NEXT_SLACK_TOKEN!;
 const openaiApiKey = process.env.NEXT_PUBLIC_OPENAI_KEY!;
-const signingSecret = process.env.SINGING_SECRET!;
 
 const slackClient = new WebClient(slackToken);
 const processedEvents: Record<string, number> = {};
