@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { WebClient } from "@slack/web-api";
 import axios from "axios";
 
-const slackToken = process.env.NEXT_PUBLIC_SLACK_CHANNEL_ACCESS_TOKEN!;
+const slackToken = process.env.NEXT_SLACK_CHANNEL_ACCESS_TOKEN!;
 const openaiApiKey = process.env.NEXT_PUBLIC_OPENAI_KEY!;
 
 const slackClient = new WebClient(slackToken);
